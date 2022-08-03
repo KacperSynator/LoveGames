@@ -4,10 +4,9 @@ Collection of simple 2D games created using [Love2D](https://love2d.org/) engine
 
 ## ShootingGallery
 
-Point and click game where the player shoots to randomly located targets. The goal is to shoot as many targets as possible until the time runs out. For every successful hit, score is increased by 1. Score is decreased by 1 for a miss.
+Point and click game where the player shoots to randomly located targets. The goal is to shoot as many targets as possible until the time runs out. For every successful hit, score is increased by 1, but for every miss, score is decreased by 1.
 
-
-
+![image](https://user-images.githubusercontent.com/62207289/182657765-41039550-f289-4a8c-8ca4-65354a25345a.png)
 
 ## Assets' sources
 
