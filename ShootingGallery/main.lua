@@ -7,6 +7,7 @@ function love.load()
     Target.radius = 64
 
     MoveTargetToRandomPosition()
+    love.window.setTitle("Shooting Gallery")
 
     Score = 0
     Timer = 0
