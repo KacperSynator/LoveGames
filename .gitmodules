@@ -1,0 +1,3 @@
+[submodule "libraries/anim8"]
+	path = libraries/anim8
+	url = https://github.com/kikito/anim8.git
