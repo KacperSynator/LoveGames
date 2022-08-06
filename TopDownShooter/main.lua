@@ -1,34 +1,34 @@
 local anim8 = require "libraries/anim8/anim8"
-local map = require "map"
-local enemy = require "enemy"
-local player = require "player"
+local Map = require "map"
+local Enemy = require "enemy"
+local Player = require "player"
 
-local Map, Player
-local Enemies = {}
+local map, player
+local enemies = {}
 
 local MapScale = 1.2
 
 function love.load()
     love.window.setTitle("TopDownShooter")
 
-    Map = map:new(nil, MapScale)
+    map = Map:new(nil, MapScale)
 
-    Player = player:new(nil, 100, 100)
+    player = Player:new(nil, 300, 200)
 
-    table.insert(Enemies, enemy:new(nil, 30, 30))
+    table.insert(enemies, Enemy:new(nil, 30, 30))
 end
 
 function love.update(dt)
-    Player:move(dt)
-    for _, en in pairs(Enemies) do
-        en:move(dt)
+    player:update(dt, map:corners())
+    for _, enemy in pairs(enemies) do
+        enemy:update(dt)
     end
 end
 
 function love.draw()
-    Map:draw()
-    Player:draw()
-    for _, en in pairs(Enemies) do
-        en:draw()
+    map:draw()
+    player:draw()
+    for _, enemy in pairs(enemies) do
+        enemy:draw()
     end
 end
