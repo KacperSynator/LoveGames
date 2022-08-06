@@ -28,7 +28,7 @@ local GameObject = { x = 0, y = 0, rotation = 0, scale = 1, image = nil }
     end
 
     function GameObject:getRadius()
-        return self.image:getHeight()
+        return self.image:getHeight() * self.scale / 2
     end
 
 return GameObject

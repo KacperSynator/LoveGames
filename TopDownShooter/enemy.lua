@@ -36,8 +36,8 @@ local Enemy = GameObject:new()
         if not self.dead then
 
             local distance_to_player = math.sqrt( (self.x - player_position.x)^2 + (self.y - player_position.y)^2 )
-            self.x = self.x + (player_position.x - self.x) / distance_to_player * speed * dt
-            self.y = self.y + (player_position.y - self.y) / distance_to_player * speed * dt
+            self.x = self.x + (player_position.x - self.x) / distance_to_player * self.speed * dt
+            self.y = self.y + (player_position.y - self.y) / distance_to_player * self.speed * dt
 
             self.animation:update(dt)
         end

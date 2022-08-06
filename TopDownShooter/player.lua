@@ -15,14 +15,14 @@ end
 
 function MovePlayer(player, dt, map_corners)
     player.moving = true
-
-        if love.keyboard.isDown("w") and player.y > map_corners.top_left_y then
+        local pos = player:getCenter()
+        if love.keyboard.isDown("w") and pos.y > map_corners.top_left_y then
             player.y = player.y - player.speed * dt
-        elseif love.keyboard.isDown("a") and player.x > map_corners.top_left_x then
+        elseif love.keyboard.isDown("a") and pos.x > map_corners.top_left_x then
             player.x = player.x - player.speed * dt
-        elseif love.keyboard.isDown("s") and player.y < map_corners.bot_right_y then
+        elseif love.keyboard.isDown("s") and pos.y < map_corners.bot_right_y then
             player.y = player.y + player.speed * dt
-        elseif love.keyboard.isDown("d") and player.x < map_corners.bot_right_x then
+        elseif love.keyboard.isDown("d") and pos.x < map_corners.bot_right_x then
             player.x = player.x + player.speed * dt
         else
             player.moving = false
