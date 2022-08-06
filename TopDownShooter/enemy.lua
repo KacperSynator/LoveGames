@@ -61,8 +61,4 @@ local Enemy = GameObject:new()
         death_sound:play()
     end
 
-    function Enemy:getPosition()
-        return { x = self.x, y = self.y }
-    end
-
 return Enemy

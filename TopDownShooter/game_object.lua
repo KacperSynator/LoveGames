@@ -20,5 +20,8 @@ local GameObject = { x = 0, y = 0, rotation = 0, scale_x = 1, scale_y = 1, image
         end
     end
 
+    function GameObject:getPosition()
+        return { x = self.x, y = self.y }
+    end
 
 return GameObject

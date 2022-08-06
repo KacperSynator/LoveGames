@@ -1,5 +1,5 @@
 local anim8 = require "libraries/anim8/anim8"
-local Enemy = require "enemy"
+local GameObject = require "game_object"
 
 
 function LoadAnimation(strip_path, frames, size_x, size_y, row, interval)
@@ -31,9 +31,9 @@ local speed = 200
 local animation_idle = LoadAnimation("Assets/sPlayerIdle_strip4.png", '1-4', 40, 40, 1)
 local animation_run = LoadAnimation("Assets/sPlayerRun_strip7.png", '1-7', 40, 40, 1)
 
-local Player = Enemy:new()
+local Player = GameObject:new()
     function Player:new(o, x, y, rotation, scale_x, scale_y)
-        o = o or Enemy:new(o, x, y, rotation, scale_x, scale_y)
+        o = o or GameObject:new(o, x, y, rotation, scale_x, scale_y)
         setmetatable(o, self)
 
         self.__index = self
@@ -56,6 +56,10 @@ local Player = Enemy:new()
         end
 
         self.animation:update(dt)
+    end
+
+    function Player:draw()
+        self.animation:draw(self.image, self.x, self.y, self.rotation, self.scale_x, self.scale_y)
     end
 
 return Player
