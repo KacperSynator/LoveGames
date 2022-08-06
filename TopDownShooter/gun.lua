@@ -19,18 +19,11 @@ local Gun = GameObject:new()
     end
 
     function Gun:update(dt, map_corners)
-        local mouse_x = love.mouse.getX()
-        local mouse_y = love.mouse.getY()
-        local vec = { x = mouse_x - self.x, y = mouse_y - self.y }
-        self.rotation = -math.acos(vec.x / math.sqrt(vec.x^2 + vec.y^2))
-        if mouse_y > self.y then
-            self.rotation = -self.rotation
-        end
+        self.rotation = math.atan2( love.mouse.getY() - self.y, love.mouse.getX() - self.x )
 
         if self.fire_timer > 0 then
             self.fire_timer = self.fire_timer - dt
         end
-        
 
         for pos, bullet in pairs(self.bullets) do
             bullet:update(dt)
