@@ -1,8 +1,19 @@
 local anim8 = require "libraries/anim8/anim8"
 local GameObject = require "game_object"
 
+
+function LoadAnimation(strip_path, frames, size_x, size_y, row, interval)
+    interval = interval or 0.1
+    local strip = love.graphics.newImage(strip_path)
+    local grid = anim8.newGrid(size_x, size_y, strip:getWidth(), strip:getHeight())
+    local result = {}
+    result.animation = anim8.newAnimation(grid(frames, row), interval)
+    result.image = strip
+    return result
+end
+
 local speed = 600
-local animation = love.graphics.newImage("Assets/sEnemy_strip7.png")
+local animation = LoadAnimation("Assets/sEnemy_strip7.png", '1-7', 40, 40, 1)
 local image_dead = love.graphics.newImage("Assets/sEnemyDead.png")
 local death_sound = love.audio.newSource("Assets/aDeath.wav", "static")
 
@@ -13,13 +24,9 @@ local Enemy = GameObject:new()
 
         self.__index = self
         o.speed = speed
-        o.image = animation
+        o.image = animation.image
+        o.animation = animation.animation
         o.dead = false
-
-        local grid = anim8.newGrid(40, 40, animation:getWidth(),
-                                           animation:getHeight())
-
-        o.animation = anim8.newAnimation(grid('1-7', 1), 0.1)
 
         return o
     end
