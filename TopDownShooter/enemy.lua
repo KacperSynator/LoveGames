@@ -12,7 +12,8 @@ function LoadAnimation(strip_path, frames, size_x, size_y, row, interval)
 end
 
 local speed = 100
-local animation = LoadAnimation("Assets/sEnemy_strip7.png", '1-7', 40, 40, 1)
+local strip_frame_size = { x = 40, y = 40 }
+local animation = LoadAnimation("Assets/sEnemy_strip7.png", '1-7', strip_frame_size.x, strip_frame_size.y, 1)
 local image_dead = love.graphics.newImage("Assets/sEnemyDead.png")
 local death_sound = love.audio.newSource("Assets/aDeath.wav", "static")
 
@@ -27,16 +28,17 @@ local Enemy = GameObject:new()
         o.animation = animation.animation
         o.dead = false
         o.death_sound = death_sound
-        
+
         return o
     end
 
     function Enemy:update(dt, player_position)
-        local distance_to_player = math.sqrt( (self.x - player_position.x)^2 + (self.y - player_position.y)^2 )
-        self.x = self.x + (player_position.x - self.x) / distance_to_player * speed * dt
-        self.y = self.y + (player_position.y - self.y) / distance_to_player * speed * dt
-
         if not self.dead then
+
+            local distance_to_player = math.sqrt( (self.x - player_position.x)^2 + (self.y - player_position.y)^2 )
+            self.x = self.x + (player_position.x - self.x) / distance_to_player * speed * dt
+            self.y = self.y + (player_position.y - self.y) / distance_to_player * speed * dt
+
             self.animation:update(dt)
         end
     end
@@ -57,6 +59,11 @@ local Enemy = GameObject:new()
         self.image = image_dead
         self.dead = true
         self.death_sound:play()
+    end
+
+    function Enemy:getCenter()
+        return { x = self.x + strip_frame_size.x * self.scale / 2,
+                 y = self.y + strip_frame_size.y * self.scale / 2 }
     end
 
 return Enemy

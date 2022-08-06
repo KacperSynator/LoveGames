@@ -44,7 +44,6 @@ local Player = GameObject:new()
         o.image = animation_idle.image
         o.animation = animation_idle.animation
         local center = o:getCenter()
-        print(center.x, center.y, o:getPosition().x, o:getPosition().y)
         o.gun = Gun:new(nil, center.x, center.y, rotation, 0.9)
         return o
     end
