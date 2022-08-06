@@ -3,7 +3,7 @@ local Bullet = require "bullet"
 
 
 local image = love.graphics.newImage("Assets/sGun.png")
-local fire_delay = 1
+local fire_delay = 0.5
 
 local Gun = GameObject:new()
     function Gun:new(o, x, y, rotation, scale)
@@ -12,6 +12,7 @@ local Gun = GameObject:new()
 
         self.__index = self
         self.image = image
+        self.fire_timer = 0
         self.bullets = {}
 
         return o
@@ -26,8 +27,14 @@ local Gun = GameObject:new()
             self.rotation = -self.rotation
         end
 
+        if self.fire_timer > 0 then
+            self.fire_timer = self.fire_timer - dt
+        end
+        
+
         for pos, bullet in pairs(self.bullets) do
             bullet:update(dt)
+
             if bullet.x < map_corners.top_left_x or bullet.x > map_corners.bot_right_x or
                bullet.y < map_corners.top_left_y or bullet.y > map_corners.bot_right_y then
 
@@ -44,7 +51,10 @@ local Gun = GameObject:new()
     end
 
     function Gun:shoot(x, y)
-        table.insert(self.bullets, Bullet:new(nil, self.x, self.y, x, y))
+        if self.fire_timer <= 0 then
+            table.insert(self.bullets, Bullet:new(nil, self.x, self.y, x, y))
+            self.fire_timer = fire_delay
+        end
     end
 
 return Gun
