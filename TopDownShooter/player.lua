@@ -6,10 +6,9 @@ function LoadAnimation(strip_path, frames, size_x, size_y, row, interval)
     interval = interval or 0.1
     local strip = love.graphics.newImage(strip_path)
     local grid = anim8.newGrid(size_x, size_y, strip:getWidth(), strip:getHeight())
-    local result = {}
-    result.animation = anim8.newAnimation(grid(frames, row), interval)
-    result.image = strip
-    return result
+
+    return { animation = anim8.newAnimation(grid(frames, row), interval),
+             image = strip }
 end
 
 function MovePlayer(player, dt, map_corners)

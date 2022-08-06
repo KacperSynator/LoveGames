@@ -70,12 +70,8 @@ local Map = GameObject:new()
         local x_bot_r = self.x + self.image:getWidth()
         local y_bot_r = self.y + self.image:getHeight()
 
-        local result = {}
-        result.top_left_x = self.x
-        result.top_left_y = self.y
-        result.bot_right_x = x_bot_r
-        result.bot_right_y = y_bot_r
-        return result
+        return { top_left_x = self.x, top_left_y = self.y,
+                 bot_right_x = x_bot_r, bot_right_y = y_bot_r }
     end
 
 
