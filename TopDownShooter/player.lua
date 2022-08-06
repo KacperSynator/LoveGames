@@ -12,6 +12,22 @@ function LoadAnimation(strip_path, frames, size_x, size_y, row, interval)
     return result
 end
 
+function MovePlayer(player, dt, map_corners)
+    player.moving = true
+
+        if love.keyboard.isDown("w") and player.y > map_corners.top_left_y then
+            player.y = player.y - player.speed * dt
+        elseif love.keyboard.isDown("a") and player.x > map_corners.top_left_x then
+            player.x = player.x - player.speed * dt
+        elseif love.keyboard.isDown("s") and player.y < map_corners.bot_right_y then
+            player.y = player.y + player.speed * dt
+        elseif love.keyboard.isDown("d") and player.x < map_corners.bot_right_x then
+            player.x = player.x + player.speed * dt
+        else
+            player.moving = false
+        end
+end
+
 local speed = 200
 local animation_idle = LoadAnimation("Assets/sPlayerIdle_strip4.png", '1-4', 40, 40, 1)
 local animation_run = LoadAnimation("Assets/sPlayerRun_strip7.png", '1-7', 40, 40, 1)
@@ -29,20 +45,8 @@ local Player = Enemy:new()
         return o
     end
 
-    function Player:move(dt)
-        self.moving = true
-        
-        if love.keyboard.isDown("w") then
-            self.y = self.y - speed * dt
-        elseif love.keyboard.isDown("a") then
-            self.x = self.x - speed * dt
-        elseif love.keyboard.isDown("s") then
-            self.y = self.y + speed * dt
-        elseif love.keyboard.isDown("d") then
-            self.x = self.x + speed * dt
-        else
-            self.moving = false
-        end
+    function Player:update(dt, map_corners)
+        MovePlayer(self, dt, map_corners)
 
         if self.moving then
             self.animation = animation_run.animation
@@ -54,6 +58,5 @@ local Player = Enemy:new()
 
         self.animation:update(dt)
     end
-
 
 return Player
