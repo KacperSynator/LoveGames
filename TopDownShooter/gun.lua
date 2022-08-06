@@ -40,7 +40,7 @@ local Gun = GameObject:new()
         for _, bullet in pairs(self.bullets) do
             bullet:draw()
         end
-        love.graphics.draw(self.image, self.x, self.y, self.rotation, self.scale, self.scale)
+        love.graphics.draw(self.image, self.x, self.y, self.rotation, self.scale, self.scale, nil, self.image:getHeight() / 2)
     end
 
     function Gun:shoot(x, y)
