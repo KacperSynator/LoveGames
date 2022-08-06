@@ -21,7 +21,7 @@ end
 function love.update(dt)
     player:update(dt, map:corners())
     for _, enemy in pairs(enemies) do
-        enemy:update(dt)
+        enemy:update(dt, player:getPosition())
     end
 end
 

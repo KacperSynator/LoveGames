@@ -6,13 +6,12 @@ function LoadAnimation(strip_path, frames, size_x, size_y, row, interval)
     interval = interval or 0.1
     local strip = love.graphics.newImage(strip_path)
     local grid = anim8.newGrid(size_x, size_y, strip:getWidth(), strip:getHeight())
-    local result = {}
-    result.animation = anim8.newAnimation(grid(frames, row), interval)
-    result.image = strip
-    return result
+
+    return { animation = anim8.newAnimation(grid(frames, row), interval),
+             image = strip }
 end
 
-local speed = 600
+local speed = 100
 local animation = LoadAnimation("Assets/sEnemy_strip7.png", '1-7', 40, 40, 1)
 local image_dead = love.graphics.newImage("Assets/sEnemyDead.png")
 local death_sound = love.audio.newSource("Assets/aDeath.wav", "static")
@@ -28,11 +27,20 @@ local Enemy = GameObject:new()
         o.animation = animation.animation
         o.dead = false
 
+        o.x = o.x + o.image:getWidth() * o.scale_x / 2
+        o.y = o.y + o.image:getHeight() * o.scale_y / 2
+
         return o
     end
 
-    function Enemy:move(dt)
-        self.animation:update(dt)
+    function Enemy:update(dt, player_position)
+        local distance_to_player = math.sqrt( (self.x - player_position.x)^2 + (self.y - player_position.y)^2 )
+        self.x = self.x + (player_position.x - self.x) / distance_to_player * speed * dt
+        self.y = self.y + (player_position.y - self.y) / distance_to_player * speed * dt
+
+        if not self.dead then
+            self.animation:update(dt)
+        end
     end
 
     function Enemy:draw()
@@ -51,6 +59,10 @@ local Enemy = GameObject:new()
         self.image = image_dead
         self.dead = true
         death_sound:play()
+    end
+
+    function Enemy:getPosition()
+        return { x = self.x, y = self.y }
     end
 
 return Enemy
