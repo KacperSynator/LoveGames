@@ -17,8 +17,8 @@ local image_dead = love.graphics.newImage("Assets/sEnemyDead.png")
 local death_sound = love.audio.newSource("Assets/aDeath.wav", "static")
 
 local Enemy = GameObject:new()
-    function Enemy:new(o, x, y, rotation, scale_x, scale_y)
-        o = o or GameObject:new(o, x, y, rotation, scale_x, scale_y)
+    function Enemy:new(o, x, y, rotation, scale)
+        o = o or GameObject:new(o, x, y, rotation, scale)
         setmetatable(o, self)
 
         self.__index = self
@@ -26,10 +26,8 @@ local Enemy = GameObject:new()
         o.image = animation.image
         o.animation = animation.animation
         o.dead = false
-
-        o.x = o.x + o.image:getWidth() * o.scale_x / 2
-        o.y = o.y + o.image:getHeight() * o.scale_y / 2
-
+        o.death_sound = death_sound
+        
         return o
     end
 
@@ -45,9 +43,9 @@ local Enemy = GameObject:new()
 
     function Enemy:draw()
         if self.dead then
-            love.graphics.draw(self.image, self.x, self.y, self.rotation, self.scale_x, self.scale_y)
+            love.graphics.draw(self.image, self.x, self.y, self.rotation, self.scale, self.scale)
         else
-            self.animation:draw(self.image, self.x, self.y, self.rotation, self.scale_x, self.scale_y)
+            self.animation:draw(self.image, self.x, self.y, self.rotation, self.scale, self.scale)
         end
     end
 
@@ -58,7 +56,7 @@ local Enemy = GameObject:new()
     function Enemy:die()
         self.image = image_dead
         self.dead = true
-        death_sound:play()
+        self.death_sound:play()
     end
 
 return Enemy

@@ -2,6 +2,7 @@ local anim8 = require "libraries/anim8/anim8"
 local Map = require "map"
 local Enemy = require "enemy"
 local Player = require "player"
+local Bullet = require "bullet"
 
 local map, player
 local enemies = {}
@@ -30,5 +31,11 @@ function love.draw()
     player:draw()
     for _, enemy in pairs(enemies) do
         enemy:draw()
+    end
+end
+
+function love.mousepressed(x, y, button, istouch, presses)
+    if button == 1 then
+        player:shoot(x, y)
     end
 end

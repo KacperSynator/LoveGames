@@ -1,5 +1,7 @@
 local anim8 = require "libraries/anim8/anim8"
 local GameObject = require "game_object"
+local Gun = require "gun"
+local strip_frame_size = { x = 40, y = 40 }
 
 
 function LoadAnimation(strip_path, frames, size_x, size_y, row, interval)
@@ -28,12 +30,12 @@ function MovePlayer(player, dt, map_corners)
 end
 
 local speed = 200
-local animation_idle = LoadAnimation("Assets/sPlayerIdle_strip4.png", '1-4', 40, 40, 1)
-local animation_run = LoadAnimation("Assets/sPlayerRun_strip7.png", '1-7', 40, 40, 1)
+local animation_idle = LoadAnimation("Assets/sPlayerIdle_strip4.png", '1-4', strip_frame_size.x, strip_frame_size.y, 1)
+local animation_run = LoadAnimation("Assets/sPlayerRun_strip7.png", '1-7', strip_frame_size.x, strip_frame_size.y, 1)
 
 local Player = GameObject:new()
-    function Player:new(o, x, y, rotation, scale_x, scale_y)
-        o = o or GameObject:new(o, x, y, rotation, scale_x, scale_y)
+    function Player:new(o, x, y, rotation, scale)
+        o = o or GameObject:new(o, x, y, rotation, scale)
         setmetatable(o, self)
 
         self.__index = self
@@ -41,11 +43,17 @@ local Player = GameObject:new()
         o.speed = speed
         o.image = animation_idle.image
         o.animation = animation_idle.animation
+        local center = o:getCenter()
+        print(center.x, center.y, o:getPosition().x, o:getPosition().y)
+        o.gun = Gun:new(nil, center.x, center.y, rotation, 0.9)
         return o
     end
 
     function Player:update(dt, map_corners)
         MovePlayer(self, dt, map_corners)
+        self.gun.x = self:getCenter().x
+        self.gun.y = self:getCenter().y
+        self.gun:update(dt, map_corners)
 
         if self.moving then
             self.animation = animation_run.animation
@@ -59,7 +67,17 @@ local Player = GameObject:new()
     end
 
     function Player:draw()
-        self.animation:draw(self.image, self.x, self.y, self.rotation, self.scale_x, self.scale_y)
+        self.animation:draw(self.image, self.x, self.y, self.rotation, self.scale, self.scale)
+        self.gun:draw()
+    end
+
+    function Player:getCenter()
+        return { x = self.x + strip_frame_size.x * self.scale / 2,
+                 y = self.y + strip_frame_size.y * self.scale / 2 }
+    end
+
+    function Player:shoot(x, y)
+        self.gun:shoot(x, y)
     end
 
 return Player

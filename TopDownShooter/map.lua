@@ -9,16 +9,14 @@ Sprites.bg = love.graphics.newImage("Assets/sBg.png")
 
 local Map = GameObject:new()
     local Wall = GameObject:new()
-        function Wall:new(o, x, y, rotation, scale_x, scale_y)
-            local offset = -15
-            local offset_x =  offset * scale_x
-            local offset_y  = offset * scale_y
+        function Wall:new(o, x, y, rotation, scale)
+            local offset = -15 * scale
 
-            o = o or GameObject:new(o, x , y, rotation, scale_x, scale_y)
+            o = o or GameObject:new(o, x , y, rotation, scale)
             setmetatable(o, self)
 
-            o.x = o.x + offset_x
-            o.y = o.y + offset_y
+            o.x = o.x + offset
+            o.y = o.y + offset
 
             self.__index = self
             o.image = Sprites.wall
@@ -26,8 +24,8 @@ local Map = GameObject:new()
         end
 
     local Background = GameObject:new()
-        function Background:new(o, x , y, rotation, scale_x, scale_y)
-            o = o or GameObject:new(o, x , y, rotation, scale_x, scale_y)
+        function Background:new(o, x , y, rotation, scale)
+            o = o or GameObject:new(o, x , y, rotation, scale)
             setmetatable(o, self)
 
             self.__index = self
@@ -37,21 +35,21 @@ local Map = GameObject:new()
 
     function Map:new(o, scale)
         scale = scale or 1
-        o = o or GameObject:new(o, 0, 0, 0, scale, scale)
+        o = o or GameObject:new(o, 0, 0, 0, scale)
         setmetatable(o, self)
 
         self.__index = self
         o.image = Sprites.map
         o.x = (love.graphics.getWidth() - o.image:getWidth() * scale) / 2
         o.y = (love.graphics.getHeight() - o.image:getHeight() * scale) / 2
-        o.wall = Wall:new(nil, o.x, o.y, o.rotation, o.scale_x, o.scale_y)
-        o.bgs = { Background:new(nil, 0, 0, 0, scale, scale) }
+        o.wall = Wall:new(nil, o.x, o.y, o.rotation, o.scale)
+        o.bgs = { Background:new(nil, 0, 0, 0, scale) }
 
         local bg_width = o.bgs[1].image:getWidth() * scale
         local bg_height = o.bgs[1].image:getHeight() * scale
         for x = 0, love.graphics.getWidth(), bg_width do
             for y = 0,  love.graphics.getHeight(), bg_height do
-                table.insert(o.bgs, Background:new(nil, x, y, 0, scale, scale))
+                table.insert(o.bgs, Background:new(nil, x, y, 0, scale))
             end
         end
         return o
@@ -62,7 +60,7 @@ local Map = GameObject:new()
             bg:draw()
         end
 
-        love.graphics.draw(self.image, self.x, self.y, self.rotation, self.scale_x, self.scale_y)
+        love.graphics.draw(self.image, self.x, self.y, self.rotation, self.scale)
         self.wall:draw()
     end
 
