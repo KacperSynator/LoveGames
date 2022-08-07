@@ -1,3 +1,6 @@
 [submodule "libraries/anim8"]
 	path = libraries/anim8
 	url = https://github.com/kikito/anim8.git
+[submodule "libraries/windfield"]
+	path = libraries/windfield
+	url = git@github.com:a327ex/windfield.git
