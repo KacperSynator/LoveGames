@@ -13,7 +13,6 @@ end
 
 local speed = 100
 local strip_frame_size = { x = 40, y = 40 }
-local animation = LoadAnimation("Assets/sEnemy_strip7.png", '1-7', strip_frame_size.x, strip_frame_size.y, 1)
 local image_dead = love.graphics.newImage("Assets/sEnemyDead.png")
 local death_sound = love.audio.newSource("Assets/aDeath.wav", "static")
 
@@ -21,6 +20,8 @@ local Enemy = GameObject:new()
     function Enemy:new(o, x, y, rotation, scale)
         o = o or GameObject:new(o, x, y, rotation, scale)
         setmetatable(o, self)
+
+        local animation = LoadAnimation("Assets/sEnemy_strip7.png", '1-7', strip_frame_size.x, strip_frame_size.y, 1)
 
         self.__index = self
         o.speed = speed
@@ -34,7 +35,6 @@ local Enemy = GameObject:new()
 
     function Enemy:update(dt, player_position)
         if not self.dead then
-
             local distance_to_player = math.sqrt( (self.x - player_position.x)^2 + (self.y - player_position.y)^2 )
             self.x = self.x + (player_position.x - self.x) / distance_to_player * self.speed * dt
             self.y = self.y + (player_position.y - self.y) / distance_to_player * self.speed * dt
