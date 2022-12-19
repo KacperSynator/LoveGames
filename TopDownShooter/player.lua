@@ -2,6 +2,7 @@ local anim8 = require "libraries/anim8/anim8"
 local GameObject = require "game_object"
 local Gun = require "gun"
 local strip_frame_size = { x = 40, y = 40 }
+local radius_offset = -7
 
 
 function LoadAnimation(strip_path, frames, size_x, size_y, row, interval)
@@ -73,6 +74,10 @@ local Player = GameObject:new()
     function Player:getCenter()
         return { x = self.x + strip_frame_size.x * self.scale / 2,
                  y = self.y + strip_frame_size.y * self.scale / 2 }
+    end
+
+    function Player:getRadius()
+        return self.image:getHeight() * self.scale / 2 + radius_offset
     end
 
     function Player:shoot(x, y)

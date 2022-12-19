@@ -15,6 +15,7 @@ local speed = 100
 local strip_frame_size = { x = 40, y = 40 }
 local image_dead = love.graphics.newImage("Assets/sEnemyDead.png")
 local death_sound = love.audio.newSource("Assets/aDeath.wav", "static")
+local radius_offset = -5
 
 local Enemy = GameObject:new()
     function Enemy:new(o, x, y, rotation, scale)
@@ -64,6 +65,10 @@ local Enemy = GameObject:new()
     function Enemy:getCenter()
         return { x = self.x + strip_frame_size.x * self.scale / 2,
                  y = self.y + strip_frame_size.y * self.scale / 2 }
+    end
+
+    function Enemy:getRadius()
+        return self.image:getHeight() * self.scale / 2 + radius_offset
     end
 
 return Enemy
