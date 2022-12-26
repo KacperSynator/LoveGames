@@ -1,10 +1,12 @@
 local utils = require "utils"
 
 local speed = 150
+local speed_modifier = 1.5
 local jump_force = -3000
 local sprite_size = {width = 115, height = 84}
 local idle_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 1)
 local walk_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 2)
+local run_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 3)
 local jump_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-1", sprite_size.width, sprite_size.height, 6)
 local fall_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-1", sprite_size.width, sprite_size.height, 8)
 local image_offset = {x = -55, y = -50}
@@ -30,6 +32,8 @@ local function animation(player_state)
         return idle_animation.animation, idle_animation.image
     elseif player_state == PlayerState.WALK then
         return walk_animation.animation, walk_animation.image
+    elseif player_state == PlayerState.RUN then
+        return run_animation.animation, run_animation.image
     elseif player_state == PlayerState.JUMP then
         return jump_animation.animation, jump_animation.image
     elseif player_state == PlayerState.FALL then
@@ -94,18 +98,19 @@ local Player = {}
         end
 
         local x = self.collider:getX()
+        local speed_mod = love.keyboard.isDown("lshift") and speed_modifier or 1
         local next_state = PlayerState.IDLE
 
         if love.keyboard.isDown("d") then
-            self.collider:setX(x + speed * dt)
+            self.collider:setX(x + speed * dt * speed_mod)
             self.direction = Direction.RIGHT
-            next_state = PlayerState.WALK
+            next_state = love.keyboard.isDown("lshift") and PlayerState.RUN or PlayerState.WALK
         end
 
         if love.keyboard.isDown("a") then
-            self.collider:setX(x - speed * dt)
+            self.collider:setX(x - speed * dt * speed_mod)
             self.direction = Direction.LEFT
-            next_state = PlayerState.WALK
+            next_state = love.keyboard.isDown("lshift") and PlayerState.RUN or PlayerState.WALK
         end
 
         if self.collider:enter("Danger") then
