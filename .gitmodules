@@ -1,6 +1,6 @@
 [submodule "Platformer/libraries/windfield"]
 	path = Platformer/libraries/windfield
-	url = git@github.com:a327ex/windfield.git
+	url = https://github.com/a327ex/windfield.git
 [submodule "Platformer/libraries/anim8"]
 	path = Platformer/libraries/anim8
 	url = https://github.com/kikito/anim8.git
