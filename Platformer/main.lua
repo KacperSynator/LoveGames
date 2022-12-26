@@ -29,8 +29,14 @@ function love.draw()
     player:draw()
 end
 
+function love.mousepressed(x, y, button, istouch, presses)
+    if button == 1 then
+        player:attack()
+    end
+end
+
 function love.keypressed(key)
-    if key == 'w' then
+    if key == "w" then
         player:jump(world)
     end
 end

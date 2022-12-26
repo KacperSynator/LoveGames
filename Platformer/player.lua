@@ -4,11 +4,6 @@ local speed = 150
 local speed_modifier = 1.5
 local jump_force = -3000
 local sprite_size = {width = 115, height = 84}
-local idle_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 1)
-local walk_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 2)
-local run_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 3)
-local jump_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-1", sprite_size.width, sprite_size.height, 6)
-local fall_animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-1", sprite_size.width, sprite_size.height, 8)
 local image_offset = {x = -55, y = -50}
 local collider_size = {width = 24, height = 45}
 local scale = 2
@@ -19,7 +14,24 @@ local PlayerState = {
     RUN = 3,
     JUMP = 4,
     FALL = 5,
+    ATTACK = 6,
+    DEAD = 7,
 }
+
+local Animations = {
+    [PlayerState.IDLE] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 1),
+    [PlayerState.WALK] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 2),
+    [PlayerState.RUN] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 3),
+    [PlayerState.JUMP] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-1", sprite_size.width, sprite_size.height, 6),
+    [PlayerState.FALL] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-1", sprite_size.width, sprite_size.height, 8),
+    [PlayerState.ATTACK] = {
+        LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-4", sprite_size.width, sprite_size.height, 9),
+        LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-4", sprite_size.width, sprite_size.height, 10),
+        LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-4", sprite_size.width, sprite_size.height, 11),
+    },
+}
+
+local anim = Animations[PlayerState.IDLE]
 
 local Direction = {
     LEFT = -1,
@@ -27,21 +39,24 @@ local Direction = {
 }
 
 
-local function animation(player_state)
-    if player_state == PlayerState.IDLE then
-        return idle_animation.animation, idle_animation.image
-    elseif player_state == PlayerState.WALK then
-        return walk_animation.animation, walk_animation.image
-    elseif player_state == PlayerState.RUN then
-        return run_animation.animation, run_animation.image
-    elseif player_state == PlayerState.JUMP then
-        return jump_animation.animation, jump_animation.image
-    elseif player_state == PlayerState.FALL then
-        return fall_animation.animation, fall_animation.image
+local function animation(player)
+    if player.state == PlayerState.ATTACK then
+        return Animations[player.state][player.attack_index].animation, Animations[player.state][player.attack_index].image
     end
+
+    return Animations[player.state].animation, Animations[player.state].image
 end
 
 local function state(player, next_state)
+    if player.state == PlayerState.ATTACK then
+        if player.animation.position == 4 then
+            player.animation:gotoFrame(1)
+            return next_state
+        end
+
+        return PlayerState.ATTACK
+    end
+
     local _, velocity_y = player.collider:getLinearVelocity()
     if not player:is_grounded() and velocity_y < 0 then
         return PlayerState.JUMP
@@ -62,12 +77,13 @@ local Player = {}
         self.__index = self
         o.scale = scale
         o.rotation = 0
-        o.image = idle_animation.image
-        o.animation = idle_animation.animation
+        o.image = Animations[PlayerState.IDLE].image
+        o.animation = Animations[PlayerState.IDLE].animation
         o.playar_state = PlayerState.IDLE
         o.direction = Direction.RIGHT
         o.collider = world:newRectangleCollider(x, y, collider_size.width * o.scale, collider_size.height * o.scale, {collision_class = "Player"})
         o.collider:setFixedRotation(true)
+        o.attack_index = 0
 
         return o
     end
@@ -89,6 +105,18 @@ local Player = {}
 
         if self:is_grounded() then
             self.collider:applyLinearImpulse(0, jump_force)
+        end
+    end
+
+    function Player:attack()
+        if self.state ~= PlayerState.ATTACK then
+            self.state = PlayerState.ATTACK
+            self.attack_index = self.attack_index + 1
+            self.collider:applyLinearImpulse(500 * self.direction, 0)
+
+            if self.attack_index == 4 then
+                self.attack_index = 1
+            end
         end
     end
 
@@ -118,7 +146,7 @@ local Player = {}
         end
 
         self.state = state(self, next_state)
-        self.animation, self.image = animation(self.state)
+        self.animation, self.image = animation(self)
 
         self.animation:update(dt)
     end
