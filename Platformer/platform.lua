@@ -1,5 +1,5 @@
 local Platform = {x = 0, y = 0, size_x = 10, size_y = 10}
-    function Platform:new(o, world, x, y, size_x, size_y)
+    function Platform:new(o, x, y, size_x, size_y)
         o = o or {}
         setmetatable(o, self)
 
