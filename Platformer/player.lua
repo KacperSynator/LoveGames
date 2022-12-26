@@ -22,6 +22,7 @@ local Animations = {
     [PlayerState.IDLE] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 1),
     [PlayerState.WALK] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 2),
     [PlayerState.RUN] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 3),
+    [PlayerState.DEAD] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-12", sprite_size.width, sprite_size.height, 5, nil, "pauseAtEnd"),
     [PlayerState.JUMP] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-1", sprite_size.width, sprite_size.height, 6),
     [PlayerState.FALL] = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-1", sprite_size.width, sprite_size.height, 8),
     [PlayerState.ATTACK] = {
@@ -29,6 +30,7 @@ local Animations = {
         LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-4", sprite_size.width, sprite_size.height, 10),
         LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-4", sprite_size.width, sprite_size.height, 11),
     },
+    
 }
 
 local anim = Animations[PlayerState.IDLE]
@@ -48,6 +50,10 @@ local function animation(player)
 end
 
 local function state(player, next_state)
+    if player.state == PlayerState.DEAD then
+        return PlayerState.DEAD
+    end
+
     if player.state == PlayerState.ATTACK then
         if player.animation.position == 4 then
             player.animation:gotoFrame(1)
@@ -99,7 +105,7 @@ local Player = {}
     end
 
     function Player:jump()
-        if not self.collider.body then
+        if self.state == PlayerState.DEAD then
             return
         end
 
@@ -109,6 +115,10 @@ local Player = {}
     end
 
     function Player:attack()
+        if self.state == PlayerState.DEAD then
+            return
+        end
+
         if self.state ~= PlayerState.ATTACK then
             self.state = PlayerState.ATTACK
             self.attack_index = self.attack_index + 1
@@ -121,8 +131,9 @@ local Player = {}
     end
 
     function Player:update(dt)
-        if not self.collider.body then
-          return
+        if self.state == PlayerState.DEAD then
+            self.animation:update(dt)
+            return
         end
 
         local x = self.collider:getX()
@@ -142,7 +153,7 @@ local Player = {}
         end
 
         if self.collider:enter("Danger") then
-            self.collider:destroy()
+            self.state = PlayerState.DEAD
         end
 
         self.state = state(self, next_state)
