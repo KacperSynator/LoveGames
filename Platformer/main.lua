@@ -11,6 +11,7 @@ function love.load()
     world:addCollisionClass("Player")
     world:addCollisionClass("Platform")
     world:addCollisionClass("Danger")
+    world:addCollisionClass("Enemy")
     world:setQueryDebugDrawing(true)
 
 

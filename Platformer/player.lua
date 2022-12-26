@@ -6,6 +6,7 @@ local jump_force = -3000
 local sprite_size = {width = 115, height = 84}
 local image_offset = {x = -55, y = -50}
 local collider_size = {width = 24, height = 45}
+local attack_query = {x = 20, y = -10, radius = 18}
 local scale = 2
 
 local PlayerState = {
@@ -122,7 +123,13 @@ local Player = {}
         if self.state ~= PlayerState.ATTACK then
             self.state = PlayerState.ATTACK
             self.attack_index = self.attack_index + 1
+
             self.collider:applyLinearImpulse(500 * self.direction, 0)
+            local x, y = self.collider:getPosition()
+            local enemies = world:queryCircleArea(x + attack_query.x * self.direction * scale,
+                                                  y + attack_query.y * scale,
+                                                  attack_query.radius * scale,
+                                                  {"Enemy"})
 
             if self.attack_index == 4 then
                 self.attack_index = 1
