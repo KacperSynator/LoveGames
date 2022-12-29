@@ -4,6 +4,7 @@ require "player_states"
 local speed = 150
 local speed_modifier = 1.5
 local jump_force = -3000
+local attack_force = 500
 local image_offset = {x = -55, y = -50}
 local collider_size = {width = 24, height = 45}
 local attack_query = {x = 20, y = -10, radius = 18}
@@ -24,6 +25,8 @@ local Player = {}
         o.rotation = 0
         o.speed = speed
         o.speed_modifier = speed_modifier
+        o.jump_force = jump_force
+        o.attack_force = attack_force
         o.image = Idle.animation.image
         o.animation = Idle.animation.animation
         o.state = Idle
@@ -45,30 +48,15 @@ local Player = {}
         return #colliders > 0
     end
 
-    function Player:update_state(new_state)
-        if self.state ~= Dead and self.state ~= Attack then
-            self.state = new_state
-            return true
-        end
-
-        return false
-    end
-
     function Player:jump()
-        if not self:update_state(Jump) then
-            return
-        end
-        if self:is_grounded() then
-            self.collider:applyLinearImpulse(0, jump_force)
-        end
+        self.state.jump(self)
     end
 
     function Player:attack()
-        if not self:update_state(Attack) then
-            return
-        end
+        self.state.attack(self)
+    end
 
-        self.collider:applyLinearImpulse(500 * self.direction, 0)
+    function Player:do_attack()
         local x, y = self.collider:getPosition()
         local enemies = world:queryCircleArea(x + attack_query.x * self.direction * scale,
                                                 y + attack_query.y * scale,

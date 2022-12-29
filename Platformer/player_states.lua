@@ -26,12 +26,33 @@ local function move(player, dt, is_speed_modified)
     end
 end
 
+local function jump(player)
+    player.state = Jump
+
+    if player:is_grounded() then
+        player.collider:applyLinearImpulse(0, player.jump_force)
+    end
+end
+
+local function attack(player)
+    player.state = Attack
+    player.collider:applyLinearImpulse(player.attack_force * player.direction, 0)
+end
+
 Idle = {
     animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-8", sprite_size.width, sprite_size.height, 1),
     update = function (dt, player)
         if love.keyboard.isDown("d") or love.keyboard.isDown("a") then
-            player:update_state(Walk)
+            player.state = Walk
         end
+    end,
+
+    jump = function (player)
+        jump(player)
+    end,
+
+    attack = function (player)
+        attack(player)
     end
 }
 
@@ -41,12 +62,20 @@ Walk = {
         move(player, dt, false)
 
         if love.keyboard.isDown("lshift") then
-            player:update_state(Run)
+            player.state = Run
         end
 
         if not love.keyboard.isDown("d") and not love.keyboard.isDown("a") then
-            player:update_state(Idle)
+            player.state = Idle
         end
+    end,
+
+    jump = function (player)
+        jump(player)
+    end,
+
+    attack = function (player)
+        attack(player)
     end
 }
 
@@ -58,8 +87,16 @@ Jump = {
         move(player, dt, false)
 
         if not player:is_grounded() and velocity_y > 0 then
-            player:update_state(Fall)
+            player.state = Fall
         end
+    end,
+
+    jump = function (player)
+
+    end,
+
+    attack = function (player)
+
     end
 }
 
@@ -69,8 +106,16 @@ Fall = {
         move(player, dt, false)
 
         if player:is_grounded() then
-            player:update_state(Idle)
+            player.state = Idle
         end
+    end,
+
+    jump = function (player)
+
+    end,
+
+    attack = function (player)
+
     end
 }
 
@@ -80,12 +125,20 @@ Run = {
         move(player, dt, true)
 
         if not love.keyboard.isDown("lshift") then
-            player:update_state(Walk)
+            player.state = Walk
         end
 
         if not love.keyboard.isDown("d") and not love.keyboard.isDown("a") then
-            player:update_state(Idle)
+            player.state = Idle
         end
+    end,
+
+    jump = function (player)
+        jump(player)
+    end,
+
+    attack = function (player)
+        attack(player)
     end
 }
 
@@ -93,6 +146,14 @@ Dead = {
     animation = LoadAnimation("assets/player/Viking/Viking-Sheet.png", "1-12", sprite_size.width, sprite_size.height, 5, nil, "pauseAtEnd"),
     update = function (dt, player)
         return
+    end,
+
+    jump = function (player)
+
+    end,
+
+    attack = function (player)
+
     end
 }
 
@@ -110,6 +171,7 @@ Attack = {
             Attack.animation_ended = false
             Attack.animation_started = false
             player.state = Idle
+            player:do_attack()
             return
         end
 
@@ -117,7 +179,7 @@ Attack = {
             Attack.animation_started = true
             Attack.animation_index = Attack.animation_index + 1
 
-            if Attack.animation_index == 4 then
+            if Attack.animation_index > #attack_animations then
                 Attack.animation_index = 1
             end
 
@@ -128,6 +190,14 @@ Attack = {
     on_animation_end = function (_, _)
         Attack.animation_ended = true
     end,
+
+    jump = function (player)
+
+    end,
+
+    attack = function (player)
+
+    end
 }
 
 attack_animations = {
